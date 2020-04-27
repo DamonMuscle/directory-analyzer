@@ -1,0 +1,47 @@
+{
+  "name": "template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prettier": "npx prettier --config ./.prettierrc --write .",
+    "build": "npx tsc --build tsconfig.json",
+    "serve": "npx ts-node \".\\src\\index.ts\"",
+    "lint": "eslint \"src/**/*.+(ts|tsx)\"",
+    "lintfix": "npm run lint -- --fix",
+    "precommit": "npm run prettier && npm run lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*": [
+      "npm run prettier",
+      "git add"
+    ],
+    "*.+(ts|tsx)": [
+      "npm run lint",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.2",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
+    "@typescript-eslint/parser": "^2.29.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-recommended": "^4.0.0",
+    "eslint-plugin-import": "^2.20.2",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.1.7",
+    "prettier": "^2.0.5",
+    "ts-node": "^8.9.1",
+    "typescript": "^3.8.3"
+  }
+}
