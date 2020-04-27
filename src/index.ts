@@ -1,3 +1,18 @@
-import { default as add } from "./module/add";
+import * as path from "path";
+import chalk from "chalk";
+import { exec } from "child_process";
 
-console.log("result", add(1, 2));
+const psFile = path.resolve(process.cwd(), "src", "stats.ps1");
+
+console.log(
+  chalk.blue("******************* Begin Analyze **********************")
+);
+
+exec(
+  `powershell.exe -ExecutionPolicy Unrestricted -File "${psFile}" "${process.cwd()}"`,
+  () => {
+    console.log(
+      chalk.green("******************* End Analyze **********************")
+    );
+  }
+);
