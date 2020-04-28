@@ -17,9 +17,12 @@ class MyArray<T> extends Array<T> {
   }
 }
 
-type Directory = {
-  directory?: string;
-};
+function formatDate(date: Date) {
+  let month: string | number = date.getMonth();
+  month = month > 9 ? month : `0${month}`;
+
+  return `${date.getFullYear()}${month}${date.getDate()}-${date.getHours()}:${date.getMinutes()}`;
+}
 
 type File = {
   name: string;
@@ -28,69 +31,43 @@ type File = {
 };
 
 export default function (statsFolder: string) {
-  const statsFileName = new MyArray<string>(fs.readdirSync(statsFolder))
-    .sort()
-    .last();
+  const statsFileName = new MyArray<string>(fs.readdirSync(statsFolder)).sort().last();
+
   const statsFullPath = path.resolve(statsFolder, statsFileName);
 
-  const arr = fs
+  const result = fs
     .readFileSync(statsFullPath, { encoding: "ucs2" })
     .split(os.EOL)
-    .map((line): File | Directory | string => {
-      line = line.trim();
-      if (
-        line.includes("Mode") &&
-        line.includes("LastWriteTime") &&
-        line.includes("Length")
-      ) {
-        line = "";
-      }
+    .reduce(
+      (acc, line) => {
+        line = line.trim();
+        if (line.includes("Mode") && line.includes("LastWriteTime") && line.includes("Length")) {
+          return acc;
+        }
 
-      if (line.startsWith("目录")) {
-        return {
-          directory: line.substring(4),
-        };
-      }
-      const candidate = line.split(" ").filter(Boolean);
-      if (candidate.length === 5) {
-        return {
-          name: candidate[4],
-          length: Number(candidate[3]),
-          lastWriteTime: new Date(`${candidate[1]} ${candidate[2]}`),
-        };
-      }
+        if (line.startsWith("目录")) {
+          acc.latestpath = line.substring(4);
+          return acc;
+        }
 
-      return "";
-    })
-    .filter(Boolean);
-
-  if (!(arr[0] as { directory?: string }).directory) {
-    throw new Error("exception");
-  }
-
-  const result = arr.reduce(
-    (acc, current: Directory | File | string) => {
-      if (typeof current === "string") {
-        return acc;
-      }
-
-      const { directory } = current as Directory;
-      if (directory) {
-        acc.latestpath = directory;
+        const candidate = line.split(" ").filter(Boolean);
+        if (candidate.length === 5) {
+          const fullPath = path.resolve(acc.latestpath, candidate[4]);
+          acc.files.push({
+            name: fullPath,
+            length: Number(candidate[3]),
+            lastWriteTime: new Date(`${candidate[1]} ${candidate[2]}`),
+          });
+        }
 
         return acc;
-      }
+      },
+      { latestpath: "", files: [] as File[] }
+    );
 
-      try {
-        const fullPath = path.resolve(acc.latestpath, (current as File).name);
-        acc.files.push({ ...current, name: fullPath } as File);
-      } catch (error) {
-        console.log(error);
-      }
-      return acc;
-    },
-    { latestpath: "", files: new MyArray<File>() }
-  );
+  const data = result.files
+    .map((fileInfo) => `${fileInfo.name}      ${formatDate(fileInfo.lastWriteTime)}      ${fileInfo.length}`)
+    .join(os.EOL);
 
-  console.log(result);
+  fs.writeFileSync(path.resolve(statsFolder, `${Date.now()}finallyResult.txt`), data);
 }
