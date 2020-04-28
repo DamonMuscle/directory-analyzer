@@ -1,6 +1,5 @@
 {
   "printWidth": 120,
   "singleQuote": false,
-  "endOfLine": "crlf",
-  "plugins": []
+  "endOfLine": "crlf"
 }

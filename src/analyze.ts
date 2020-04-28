@@ -32,8 +32,8 @@ export default function (statsFolder: string, scanPath: string, outputPath: stri
     .readFileSync(statsFullPath, { encoding: "ucs2" })
     .split(os.EOL)
     .reduce(
-      (acc, line) => {
-        line = line.trim();
+      (acc, l) => {
+        const line = l.trim();
         if (line.includes("Mode") && line.includes("LastWriteTime") && line.includes("Length")) {
           return acc;
         }

@@ -3,7 +3,7 @@
     "browser": true,
     "es6": true
   },
-  "extends": ["airbnb-base", "eslint:recommended", "plugin:import/typescript"],
+  "extends": ["airbnb-base", "eslint:recommended", "plugin:import/typescript", "plugin:prettier/recommended"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -20,25 +20,11 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
-    "quotes": [2, "double"],
+    // "prettier/prettier": 2,
     "no-console": 0,
     "import/no-named-default": 0,
-    "import/extensions": 0,
-    "linebreak-style": ["error", "windows"],
-    "comma-dangle": [
-      "error",
-      {
-        "arrays": "always-multiline",
-        "objects": "always-multiline",
-        "imports": "never",
-        "exports": "never",
-        "functions": "never"
-      }
-    ],
-    // "brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
-    "no-param-reassign": 0,
-    "operator-linebreak": [2, "after"]
+    "import/extensions": 0
   }
 }
