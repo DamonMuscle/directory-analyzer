@@ -2,6 +2,8 @@ import * as path from "path";
 import * as fs from "fs";
 import * as os from "os";
 
+const moment = require("moment");
+
 class MyArray<T> extends Array<T> {
   constructor(items?: Array<T>) {
     if (!items) {
@@ -59,13 +61,13 @@ export default function (statsFolder: string, scanPath: string, outputPath: stri
     );
 
   const data = result.files
-    .map((file) => `${file.name}      ${file.lastWriteTime.toISOString()}      ${file.length}`)
+    .map((file) => `${file.name}      ${moment(file.lastWriteTime).format("YYYYMMDD-HH:mm:ss")}      ${file.length}`)
     .join(os.EOL);
 
   const totalSize = result.files.reduce((acc, file) => acc + file.length, 0) / (1024 * 1024);
 
   fs.writeFileSync(
-    path.resolve(outputPath, `${new Date().toISOString().replace(/[^\d|^T]/g, "")}.txt`),
+    path.resolve(outputPath, `${moment().format("YYYYMMDDTHHmmss")}.txt`),
     `scan path: "${scanPath}"${os.EOL}${totalSize.toFixed(2)}MB${os.EOL}${data}`
   );
 }

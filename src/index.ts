@@ -7,7 +7,7 @@ import { default as analyze } from "./analyze";
 const config: {
   scanPath: string;
   outputPath: string;
-} = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "config.json"), { encoding: "utf8" }));
+} = require("../config.json");
 
 const psFile = path.resolve(process.cwd(), "src", "stats.ps1");
 
