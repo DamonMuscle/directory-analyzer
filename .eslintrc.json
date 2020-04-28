@@ -36,6 +36,9 @@
         "exports": "never",
         "functions": "never"
       }
-    ]
+    ],
+    // "brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
+    "no-param-reassign": 0,
+    "operator-linebreak": [2, "after"]
   }
 }

@@ -14,6 +14,6 @@ $errorPath = "$folder\statsResult\$timeStamp error.txt"
 
 Write-Host $errorPath
 
-Get-ChildItem -Path "C:\" -Recurse -ErrorAction SilentlyContinue -ErrorVariable $errorDetails | Out-File $output
+Get-ChildItem -Path "C:\" -File -Recurse -ErrorAction SilentlyContinue -ErrorVariable $errorDetails | Out-File $output
 
 $errorDetails | Out-File $errorPath
