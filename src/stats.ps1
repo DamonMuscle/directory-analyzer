@@ -1,19 +1,19 @@
-$folder = $args[0]
+$scanPath = $args[0]
+
+$outputFolder = $args[1]
+
+Write-Host "scan path: $scanPath"
 
 $timeStamp = Get-Date -Format "yyyyMMddTHHmmss"
 
-Write-Host $folder
+Write-Host "output directory: $outputFolder"
 
-New-Item -Path $folder -Name "statsResult" -ItemType "directory" -Force
+$output = "$outputFolder\$timeStamp stats.txt"
 
-$output = "$folder\statsResult\$timeStamp stats.txt"
+Write-Host "output full path: $output"
 
-Write-Host $output
+$errorPath = "$outputFolder\$timeStamp error.txt"
 
-$errorPath = "$folder\statsResult\$timeStamp error.txt"
-
-Write-Host $errorPath
-
-Get-ChildItem -Path "C:\" -File -Recurse -ErrorAction SilentlyContinue -ErrorVariable $errorDetails | Out-File $output
+Get-ChildItem -Path $scanPath -File -Recurse -ErrorAction SilentlyContinue -ErrorVariable $errorDetails | Out-File $output
 
 $errorDetails | Out-File $errorPath

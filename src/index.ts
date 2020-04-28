@@ -1,13 +1,31 @@
+import * as fs from "fs";
 import * as path from "path";
 import chalk from "chalk";
-import { exec } from "child_process";
+import * as shell from "shelljs";
 import { default as analyze } from "./analyze";
+
+const config: {
+  scanPath: string;
+  outputPath: string;
+} = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "config.json"), { encoding: "utf8" }));
 
 const psFile = path.resolve(process.cwd(), "src", "stats.ps1");
 
-console.log(chalk.blue("******************* Begin Analyze **********************"));
+if (!fs.existsSync(config.outputPath)) {
+  fs.mkdirSync(config.outputPath);
+}
 
-exec(`powershell.exe -ExecutionPolicy Unrestricted -File "${psFile}" "${process.cwd()}"`, () => {
-  analyze(path.resolve(process.cwd(), "statsResult"));
-  console.log(chalk.green("******************* End Analyze **********************"));
+const temp = path.resolve(process.cwd(), "statsResult");
+if (!fs.existsSync(temp)) {
+  fs.mkdirSync(temp);
+}
+
+const command = `powershell.exe -ExecutionPolicy Unrestricted -File ${psFile} ${config.scanPath} ${temp}`;
+
+console.log(chalk.blue("******************* Begin Scan **********************"));
+
+shell.exec(command, () => {
+  console.log(chalk.yellow("******************* Begin Analyze **********************"));
+  analyze(temp, config.scanPath, config.outputPath);
+  console.log(chalk.green("*********************** End ***************************"));
 });

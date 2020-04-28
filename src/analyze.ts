@@ -17,20 +17,13 @@ class MyArray<T> extends Array<T> {
   }
 }
 
-function formatDate(date: Date) {
-  let month: string | number = date.getMonth();
-  month = month > 9 ? month : `0${month}`;
-
-  return `${date.getFullYear()}${month}${date.getDate()}-${date.getHours()}:${date.getMinutes()}`;
-}
-
 type File = {
   name: string;
   lastWriteTime: Date;
   length: number;
 };
 
-export default function (statsFolder: string) {
+export default function (statsFolder: string, scanPath: string, outputPath: string) {
   const statsFileName = new MyArray<string>(fs.readdirSync(statsFolder)).sort().last();
 
   const statsFullPath = path.resolve(statsFolder, statsFileName);
@@ -66,8 +59,13 @@ export default function (statsFolder: string) {
     );
 
   const data = result.files
-    .map((fileInfo) => `${fileInfo.name}      ${formatDate(fileInfo.lastWriteTime)}      ${fileInfo.length}`)
+    .map((file) => `${file.name}      ${file.lastWriteTime.toISOString()}      ${file.length}`)
     .join(os.EOL);
 
-  fs.writeFileSync(path.resolve(statsFolder, `${Date.now()}finallyResult.txt`), data);
+  const totalSize = result.files.reduce((acc, file) => acc + file.length, 0) / (1024 * 1024);
+
+  fs.writeFileSync(
+    path.resolve(outputPath, `${new Date().toISOString().replace(/[^\d|^T]/g, "")}.txt`),
+    `scan path: "${scanPath}"${os.EOL}${totalSize.toFixed(2)}MB${os.EOL}${data}`
+  );
 }
