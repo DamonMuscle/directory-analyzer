@@ -1,8 +1,6 @@
 .history
 dist
 node_modules
-.gitignore
-.prettierignore
 
 *.ps1
-.eslintignore
+.*ignore

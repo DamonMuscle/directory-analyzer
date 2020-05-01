@@ -2,7 +2,7 @@
   "name": "template",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist\\index.js",
   "scripts": {
     "prettier": "npx prettier --config ./.prettierrc --write .",
     "build": "npx tsc --build tsconfig.json",
