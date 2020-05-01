@@ -15,10 +15,20 @@ export default function analyzer(scanPath: string, outputPath: string) {
     return;
   }
 
+  if (!fs.existsSync(scanPath)) {
+    console.log(chalk.red(`"${scanPath}" is not exist.`));
+    return;
+  }
+
   const psFile = path.resolve(__dirname, "../src", "stats.ps1");
 
   if (!fs.existsSync(outputPath)) {
-    fs.mkdirSync(outputPath);
+    try {
+      fs.mkdirSync(outputPath);
+    } catch {
+      console.log(chalk.red(`"${outputPath}" is not exist and cannot be created.`));
+      return;
+    }
   }
 
   const temp = path.resolve(__dirname, "statsResult");
