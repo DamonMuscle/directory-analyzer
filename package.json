@@ -53,11 +53,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DamonMuscle/osMonitor.git"
+    "url": "git+https://github.com/DamonMuscle/directory-analyzer.git"
   },
   "bugs": {
-    "url": "https://github.com/DamonMuscle/osMonitor/issues"
+    "url": "https://github.com/DamonMuscle/directory-analyzer/issues"
   },
-  "homepage": "https://github.com/DamonMuscle/osMonitor#readme",
+  "homepage": "https://github.com/DamonMuscle/directory-analyzer#readme",
   "description": ""
 }
