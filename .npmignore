@@ -1,3 +1,9 @@
-node_modules/
-statsResult/
-.vscode/
+node_modules
+statsResult
+.vscode
+__test__
+src
+.editorconfig
+.prettierrc
+.*ignore
+*.json
