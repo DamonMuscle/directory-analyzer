@@ -1,18 +1,15 @@
 import * as path from "path";
 import * as os from "os";
 import chalk from "chalk";
-import moment from "moment";
 import shell from "shelljs";
 import fsx from "fs-extra";
-import { FileDetail } from "./typing";
+import { FileDetail, CustomDate } from "./typing";
 import { default as analyze } from "./analyze";
 
 function writeResult2File(scanPath: string, outputPath: string, files: FileDetail[]): void {
   const totalSize = files.reduce((acc, file) => acc + (file.length || 0), 0) / (1024 * 1024);
 
-  const data = files
-    .map((file) => `${file.name}      ${moment(file.lastWriteTime).format("YYYYMMDD-HH:mm:ss")}      ${file.length}`)
-    .join(os.EOL);
+  const data = files.map((file) => `${file.name}      ${file.lastWriteTime.format()}      ${file.length}`).join(os.EOL);
 
   fsx.writeFileSync(outputPath, `scan path: "${scanPath}"${os.EOL}${totalSize.toFixed(2)}MB${os.EOL}${data}`);
 }
@@ -28,7 +25,7 @@ function walk(dir: string): FileDetail[] {
       } else {
         files.push({
           name: fullpath,
-          lastWriteTime: detail.mtime,
+          lastWriteTime: new CustomDate(detail.mtime),
           length: detail.size,
         } as FileDetail);
       }
@@ -90,7 +87,7 @@ export default function analyzer(scanPath: string, outputDir: string): void {
   }
 
   scan(scanPath).then((files) => {
-    const outputPath = path.resolve(outputDir, `${moment().format("YYYYMMDDTHHmmss")}.txt`);
+    const outputPath = path.resolve(outputDir, `${new CustomDate().format()}.txt`);
     writeResult2File(scanPath, outputPath, files);
     console.log(chalk.green(`Analyze finished and see the result at ${outputPath}`));
   });

@@ -1,5 +1,10 @@
+import { default as CustomDate } from "./customeDate";
+import { default as CustomArray } from "./customArray";
+
 export type FileDetail = {
   name: string;
-  lastWriteTime: Date;
+  lastWriteTime: CustomDate;
   length: number;
 };
+
+export { CustomArray, CustomDate };

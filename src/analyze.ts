@@ -1,25 +1,10 @@
 import * as path from "path";
 import * as os from "os";
 import fsx from "fs-extra";
-import { FileDetail } from "./typing";
-
-class MyArray<T> extends Array<T> {
-  constructor(items?: Array<T>) {
-    if (!items) {
-      super();
-    } else {
-      super(...items);
-    }
-    Object.setPrototypeOf(this, Object.create(MyArray.prototype));
-  }
-
-  last(): T | string {
-    return this.length === 0 ? "" : this[this.length - 1];
-  }
-}
+import { FileDetail, CustomArray, CustomDate } from "./typing";
 
 export default function (statsFolder: string, scanPath: string): FileDetail[] {
-  const statsFileName = new MyArray<string>(fsx.readdirSync(statsFolder)).sort().last();
+  const statsFileName = new CustomArray<string>(fsx.readdirSync(statsFolder)).sort().last();
 
   const statsFullPath = path.resolve(statsFolder, statsFileName);
 
@@ -45,7 +30,7 @@ export default function (statsFolder: string, scanPath: string): FileDetail[] {
           acc.files.push({
             name: fullPath,
             length: Number(candidate[3]),
-            lastWriteTime: new Date(`${candidate[1]} ${candidate[2]}`),
+            lastWriteTime: new CustomDate(`${candidate[1]} ${candidate[2]}`),
           });
         }
 
