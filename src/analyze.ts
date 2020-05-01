@@ -40,8 +40,9 @@ export default function (statsFolder: string, scanPath: string, outputPath: stri
           return acc;
         }
 
-        if (line.startsWith("目录")) {
-          acc.latestpath = line.substring(4);
+        if (line.includes(scanPath)) {
+          const index = line.indexOf(scanPath);
+          acc.latestpath = line.substring(index).trim();
           return acc;
         }
 

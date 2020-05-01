@@ -5,6 +5,10 @@ import chalk from "chalk";
 import * as shell from "shelljs";
 import { default as analyze } from "./analyze";
 
+function cleanup(temp: string) {
+  shell.exec(`rm "${temp}" -force -r`);
+}
+
 export default function analyzer(scanPath: string, outputPath: string) {
   if (!os.type().toLowerCase().includes("windows")) {
     console.log(chalk.red("Currently we support windows only."));
@@ -22,14 +26,15 @@ export default function analyzer(scanPath: string, outputPath: string) {
     fs.mkdirSync(temp);
   }
 
-  const command = `powershell.exe -ExecutionPolicy Unrestricted -File ${psFile} ${scanPath} ${temp}`;
+  try {
+    const command = `powershell.exe -ExecutionPolicy Unrestricted -File ${psFile} ${scanPath} ${temp}`;
 
-  console.log(chalk.blue("******************* Begin Scan **********************"));
-
-  shell.exec(command, () => {
-    console.log(chalk.yellow("******************* Begin Analyze **********************"));
-    analyze(temp, scanPath, outputPath);
-    fs.rmdirSync(temp);
-    console.log(chalk.green("*********************** End ***************************"));
-  });
+    shell.exec(command, () => {
+      analyze(temp, scanPath, outputPath);
+      cleanup(temp);
+      console.log(chalk.green(`Analyze finished and see the result at ${outputPath}`));
+    });
+  } catch (error) {
+    console.log(chalk.red(error));
+  }
 }
