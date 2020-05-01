@@ -9,7 +9,7 @@ function cleanup(temp: string) {
   shell.exec(`rm "${temp}" -force -r`);
 }
 
-export default function analyzer(scanPath: string, outputPath: string) {
+export default function analyzer(scanPath: string, outputDir: string) {
   if (!os.type().toLowerCase().includes("windows")) {
     console.log(chalk.red("Currently we support windows only."));
     return;
@@ -22,11 +22,11 @@ export default function analyzer(scanPath: string, outputPath: string) {
 
   const psFile = path.resolve(__dirname, "../src", "stats.ps1");
 
-  if (!fs.existsSync(outputPath)) {
+  if (!fs.existsSync(outputDir)) {
     try {
-      fs.mkdirSync(outputPath);
+      fs.mkdirSync(outputDir);
     } catch {
-      console.log(chalk.red(`"${outputPath}" is not exist and cannot be created.`));
+      console.log(chalk.red(`"${outputDir}" is not exist and cannot be created.`));
       return;
     }
   }
@@ -40,7 +40,7 @@ export default function analyzer(scanPath: string, outputPath: string) {
     const command = `powershell.exe -ExecutionPolicy Unrestricted -File ${psFile} ${scanPath} ${temp}`;
 
     shell.exec(command, () => {
-      analyze(temp, scanPath, outputPath);
+      const outputPath = analyze(temp, scanPath, outputDir);
       cleanup(temp);
       console.log(chalk.green(`Analyze finished and see the result at ${outputPath}`));
     });

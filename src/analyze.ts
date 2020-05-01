@@ -25,7 +25,7 @@ type File = {
   length: number;
 };
 
-export default function (statsFolder: string, scanPath: string, outputPath: string) {
+export default function (statsFolder: string, scanPath: string, outputDir: string): string {
   const statsFileName = new MyArray<string>(fs.readdirSync(statsFolder)).sort().last();
 
   const statsFullPath = path.resolve(statsFolder, statsFileName);
@@ -65,10 +65,11 @@ export default function (statsFolder: string, scanPath: string, outputPath: stri
     .map((file) => `${file.name}      ${moment(file.lastWriteTime).format("YYYYMMDD-HH:mm:ss")}      ${file.length}`)
     .join(os.EOL);
 
-  const totalSize = result.files.reduce((acc, file) => acc + file.length, 0) / (1024 * 1024);
+  const totalSize = result.files.reduce((acc, file) => acc + (file.length || 0), 0) / (1024 * 1024);
 
-  fs.writeFileSync(
-    path.resolve(outputPath, `${moment().format("YYYYMMDDTHHmmss")}.txt`),
-    `scan path: "${scanPath}"${os.EOL}${totalSize.toFixed(2)}MB${os.EOL}${data}`
-  );
+  const outputPath = path.resolve(outputDir, `${moment().format("YYYYMMDDTHHmmss")}.txt`);
+
+  fs.writeFileSync(outputPath, `scan path: "${scanPath}"${os.EOL}${totalSize.toFixed(2)}MB${os.EOL}${data}`);
+
+  return outputPath;
 }
