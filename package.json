@@ -10,7 +10,7 @@
     "lintfix": "npm run lint -- --fix",
     "precommit": "npm run prettier && npm run lint",
     "test": "jest --detectOpenHandles --colors",
-    "prepublish": "npm run precommit && npm run build && npm test && echo \"update version and commit code\""
+    "prepublishOnly": "npm run precommit && npm run build && npm test && echo \"update version and commit code\""
   },
   "keywords": [],
   "author": "damon.huang",
