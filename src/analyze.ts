@@ -1,8 +1,7 @@
 import * as path from "path";
-import * as fs from "fs";
 import * as os from "os";
-
-const moment = require("moment");
+import fsx from "fs-extra";
+import { FileDetail } from "./typing";
 
 class MyArray<T> extends Array<T> {
   constructor(items?: Array<T>) {
@@ -14,23 +13,17 @@ class MyArray<T> extends Array<T> {
     Object.setPrototypeOf(this, Object.create(MyArray.prototype));
   }
 
-  last() {
+  last(): T | string {
     return this.length === 0 ? "" : this[this.length - 1];
   }
 }
 
-type File = {
-  name: string;
-  lastWriteTime: Date;
-  length: number;
-};
-
-export default function (statsFolder: string, scanPath: string, outputDir: string): string {
-  const statsFileName = new MyArray<string>(fs.readdirSync(statsFolder)).sort().last();
+export default function (statsFolder: string, scanPath: string): FileDetail[] {
+  const statsFileName = new MyArray<string>(fsx.readdirSync(statsFolder)).sort().last();
 
   const statsFullPath = path.resolve(statsFolder, statsFileName);
 
-  const result = fs
+  const result = fsx
     .readFileSync(statsFullPath, { encoding: "ucs2" })
     .split(os.EOL)
     .reduce(
@@ -58,18 +51,8 @@ export default function (statsFolder: string, scanPath: string, outputDir: strin
 
         return acc;
       },
-      { latestpath: "", files: [] as File[] }
+      { latestpath: "", files: [] as FileDetail[] }
     );
 
-  const data = result.files
-    .map((file) => `${file.name}      ${moment(file.lastWriteTime).format("YYYYMMDD-HH:mm:ss")}      ${file.length}`)
-    .join(os.EOL);
-
-  const totalSize = result.files.reduce((acc, file) => acc + (file.length || 0), 0) / (1024 * 1024);
-
-  const outputPath = path.resolve(outputDir, `${moment().format("YYYYMMDDTHHmmss")}.txt`);
-
-  fs.writeFileSync(outputPath, `scan path: "${scanPath}"${os.EOL}${totalSize.toFixed(2)}MB${os.EOL}${data}`);
-
-  return outputPath;
+  return result.files;
 }
