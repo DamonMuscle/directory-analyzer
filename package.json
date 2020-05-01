@@ -1,7 +1,6 @@
 {
-  "name": "template",
+  "name": "@damon.huang/directory-analyzer",
   "version": "1.0.0",
-  "description": "",
   "main": "dist\\index.js",
   "scripts": {
     "prettier": "npx prettier --config ./.prettierrc --write .",
@@ -13,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "damon.huang",
   "license": "MIT",
   "husky": {
     "hooks": {
@@ -51,5 +50,14 @@
     "chalk": "^4.0.0",
     "moment": "^2.24.0",
     "shelljs": "^0.8.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DamonMuscle/osMonitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DamonMuscle/osMonitor/issues"
+  },
+  "homepage": "https://github.com/DamonMuscle/osMonitor#readme",
+  "description": ""
 }
