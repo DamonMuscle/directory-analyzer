@@ -6,4 +6,6 @@ src
 .editorconfig
 .prettierrc
 .*ignore
-*.json
+tsconfig.json
+.eslintrc.json
+jest.config.js
