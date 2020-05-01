@@ -2,10 +2,10 @@ import * as path from "path";
 import * as os from "os";
 import chalk from "chalk";
 import moment from "moment";
-import * as shell from "shelljs";
+import shell from "shelljs";
 import fsx from "fs-extra";
-import { default as analyze } from "./analyze";
 import { FileDetail } from "./typing";
+import { default as analyze } from "./analyze";
 
 function writeResult2File(scanPath: string, outputPath: string, files: FileDetail[]): void {
   const totalSize = files.reduce((acc, file) => acc + (file.length || 0), 0) / (1024 * 1024);
@@ -17,7 +17,30 @@ function writeResult2File(scanPath: string, outputPath: string, files: FileDetai
   fsx.writeFileSync(outputPath, `scan path: "${scanPath}"${os.EOL}${totalSize.toFixed(2)}MB${os.EOL}${data}`);
 }
 
-export function scan(scanPath: string): Promise<FileDetail[]> {
+function walk(dir: string): FileDetail[] {
+  const files: FileDetail[] = [];
+  fsx.readdirSync(dir).forEach((file) => {
+    const fullpath = path.resolve(dir, file);
+    try {
+      const detail = fsx.statSync(fullpath);
+      if (detail.isDirectory()) {
+        files.push(...walk(fullpath));
+      } else {
+        files.push({
+          name: fullpath,
+          lastWriteTime: detail.mtime,
+          length: detail.size,
+        } as FileDetail);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  return files;
+}
+
+function scanWindows(scanPath: string): Promise<FileDetail[]> {
   const psFile = path.resolve(__dirname, "../src", "stats.ps1");
   const temp = path.resolve(__dirname, "statsResult");
   if (!fsx.existsSync(temp)) {
@@ -43,12 +66,15 @@ export function scan(scanPath: string): Promise<FileDetail[]> {
   });
 }
 
-export default function analyzer(scanPath: string, outputDir: string): void {
-  if (!os.type().toLowerCase().includes("windows")) {
-    console.log(chalk.red("Currently we support windows only."));
-    return;
-  }
+function scanNoneWindows(scanPath: string): Promise<FileDetail[]> {
+  return Promise.resolve(walk(scanPath));
+}
 
+export function scan(scanPath: string): Promise<FileDetail[]> {
+  return os.type().toLowerCase().includes("windows") ? scanWindows(scanPath) : scanNoneWindows(scanPath);
+}
+
+export default function analyzer(scanPath: string, outputDir: string): void {
   if (!fsx.existsSync(scanPath)) {
     console.log(chalk.red(`"${scanPath}" is not exist.`));
     return;

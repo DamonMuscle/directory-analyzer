@@ -13,7 +13,7 @@ test("smoke", async () => {
   const tempDir = path.resolve(__dirname, Math.random().toString(36).substring(2));
   fsx.mkdirSync(tempDir);
 
-  const count = Math.max(Math.floor(Math.random() * 1000), 750);
+  const count = Math.max(Math.floor(Math.random() * 1000), 800);
   const fileNames = new Array(count).fill("").map(() => {
     const fullpath = path.resolve(tempDir, `${Math.random().toString(36).substring(2)}_${Date.now()}.txt`);
 
@@ -25,5 +25,5 @@ test("smoke", async () => {
 
   expect(scanResult.map((x) => x.name).every((x) => fileNames.includes(x)) && scanResult.length > 0).toBe(true);
 
-  fsx.removeSync(tempDir);
+  fsx.remove(tempDir);
 });
